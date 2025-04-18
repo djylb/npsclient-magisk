@@ -1,0 +1,67 @@
+name: Update NPS Client
+
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [trigger-update]
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get NPS Client version
+        run: |
+          latest_version=$(curl --silent "https://api.github.com/repos/djylb/npsclient/releases/latest" | jq -r .tag_name) 
+          if [ "$latest_version" = "null" ] || [ -z "$latest_version" ]; then
+            echo "Failed to retrieve remote version." 
+            exit 1
+          else
+            latest_version_no_v=$(echo "$latest_version" | sed 's/^v//' | xargs)
+          fi
+          echo "Latest NPS Client version: '$latest_version_no_v'" 
+          echo "LATEST_VERSION=$latest_version_no_v" >> $GITHUB_ENV
+
+      - name: Download APK
+        run: |
+          curl -L "https://github.com/djylb/npsclient/releases/download/v${{ env.LATEST_VERSION }}/app-universal-release.apk" -o app-universal-release.apk
+          mkdir -p system/priv-app/com.duanlab.npsclient/
+          mv app-universal-release.apk system/priv-app/com.duanlab.npsclient/com.duanlab.npsclient.apk
+          echo "APK replaced with the latest version."
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "djylb"
+          git config --global user.email "duan@d-jy.net"
+          git add system/priv-app/com.duanlab.npsclient/com.duanlab.npsclient.apk
+          
+          if git diff --cached --quiet; then
+            echo "No changes detected, skipping commit."
+            echo "IF_CHANGE=0" >> $GITHUB_ENV
+            exit 0
+          else
+            git commit -m "Update NPS Client to v${{ env.LATEST_VERSION }}"
+            git push
+            echo "IF_CHANGE=1" >> $GITHUB_ENV
+          fi
+
+      - name: Create ZIP file
+        if: env.IF_CHANG == '1'
+        run: |
+          zip -r npsclient-v${{ env.LATEST_VERSION }}.zip . -x '*.github/*' '*.git/*'
+          echo "Module zipped as npsclient-v${{ env.LATEST_VERSION }}.zip"
+
+      - name: Upload release files
+        uses: softprops/action-gh-release@v2
+        if: env.IF_CHANG == '1'
+        with:
+          tag_name: v${{ env.LATEST_VERSION }}
+          name: v${{ env.LATEST_VERSION }}
+          body: "NPS Client - v${{ env.LATEST_VERSION }}"
+          files: |
+            npsclient-v${{ env.LATEST_VERSION }}.zip
+          fail_on_unmatched_files: true
+          token: ${{ secrets.GITHUB_TOKEN }}
