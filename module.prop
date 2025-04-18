@@ -1,6 +1,6 @@
-id=callrecorder-axet
-name=Axet's Call Recorder
-version=v1.0.4
-versionCode=10040
-author=di72nn,D-Jy
-description=Record calls with axet's Call Recorder (compatible with F-Droid updates)
+id=npsclient-magisk
+name=NPS Client
+version=v1.0.7
+versionCode=10070
+author=D-Jy
+description=NPS Client
