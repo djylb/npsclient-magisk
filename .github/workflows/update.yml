@@ -32,11 +32,30 @@ jobs:
           mv app-universal-release.apk system/priv-app/com.duanlab.npsclient/com.duanlab.npsclient.apk
           echo "APK replaced with the latest version."
 
+      - name: Read versionCode
+        run: |
+          version_code=$(grep -oP 'versionCode=\K\d+' module.prop)
+          if [ -z "$version_code" ]; then
+            echo "Failed to read versionCode from module.prop."
+            exit 1
+          fi
+          new_version_code=$((version_code + 1))
+          echo "Current versionCode: $version_code"
+          echo "New versionCode: $new_version_code"
+          echo "NEW_VERSION_CODE=$new_version_code" >> $GITHUB_ENV
+
+      - name: Update module.prop
+        run: |
+          # Update versionCode and version in module.prop
+          sed -i "s/versionCode=[0-9]\+/versionCode=${{ env.NEW_VERSION_CODE }}/" module.prop
+          sed -i "s/version=v[0-9]\+\.[0-9]\+\.[0-9]\+/version=v${{ env.LATEST_VERSION }}/" module.prop
+          echo "Updated module.prop with new versionCode and version."
+
       - name: Commit and push changes
         run: |
           git config --global user.name "djylb"
           git config --global user.email "duan@d-jy.net"
-          git add system/priv-app/com.duanlab.npsclient/com.duanlab.npsclient.apk
+          git add module.prop system/priv-app/com.duanlab.npsclient/com.duanlab.npsclient.apk
           
           if git diff --cached --quiet; then
             echo "No changes detected, skipping commit."
