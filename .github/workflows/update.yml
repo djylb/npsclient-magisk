@@ -49,14 +49,14 @@ jobs:
           fi
 
       - name: Create ZIP file
-        if: env.IF_CHANG == '1'
+        if: env.IF_CHANGE == '1'
         run: |
           zip -r npsclient-v${{ env.LATEST_VERSION }}.zip . -x '*.github/*' '*.git/*'
           echo "Module zipped as npsclient-v${{ env.LATEST_VERSION }}.zip"
 
       - name: Upload release files
         uses: softprops/action-gh-release@v2
-        if: env.IF_CHANG == '1'
+        if: env.IF_CHANGE == '1'
         with:
           tag_name: v${{ env.LATEST_VERSION }}
           name: v${{ env.LATEST_VERSION }}
