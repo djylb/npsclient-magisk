@@ -54,7 +54,7 @@ jobs:
       - name: Update update.json
         run: |
           # Update the version and versionCode in update.json
-          jq ".version = \"v${{ env.LATEST_VERSION }}\" | .versionCode = ${{ env.NEW_VERSION_CODE }} | .zipUrl = \"https://github.com/djylb/npsclient-magisk/releases/download/v${{ env.LATEST_VERSION }}-${{ env.NEW_VERSION_CODE }}/npsclient-v${{ env.LATEST_VERSION }}-${{ env.NEW_VERSION_CODE }}.zip\" | .changelog = \"https://cdn.jsdelivr.net/gh/djylb/npsclient-magisk/changelog.md\"" update.json > update.json.tmp && mv update.json.tmp update.json
+          jq ".version = \"v${{ env.LATEST_VERSION }}\" | .versionCode = ${{ env.NEW_VERSION_CODE }} | .zipUrl = \"https://github.com/djylb/npsclient-magisk/releases/download/v${{ env.LATEST_VERSION }}/npsclient-v${{ env.LATEST_VERSION }}.zip\" | .changelog = \"https://cdn.jsdelivr.net/gh/djylb/npsclient-magisk/changelog.md\"" update.json > update.json.tmp && mv update.json.tmp update.json
           echo "Updated update.json with new version and versionCode."
 
       - name: Update changelog.md
@@ -82,17 +82,17 @@ jobs:
       - name: Create ZIP file
         if: env.IF_CHANGE == '1'
         run: |
-          zip -r npsclient-v${{ env.LATEST_VERSION }}-${{ env.NEW_VERSION_CODE }}.zip . -x '*.github/*' '*.git/*' 'update.json' 'changelog.md'
-          echo "Module zipped as npsclient-v${{ env.LATEST_VERSION }}-${{ env.NEW_VERSION_CODE }}.zip"
+          zip -r npsclient-v${{ env.LATEST_VERSION }}.zip . -x '*.github/*' '*.git/*' 'update.json' 'changelog.md'
+          echo "Module zipped as npsclient-v${{ env.LATEST_VERSION }}.zip"
 
       - name: Upload release files
         uses: softprops/action-gh-release@v2
         if: env.IF_CHANGE == '1'
         with:
-          tag_name: v${{ env.LATEST_VERSION }}-${{ env.NEW_VERSION_CODE }}
-          name: v${{ env.LATEST_VERSION }}-${{ env.NEW_VERSION_CODE }}
+          tag_name: v${{ env.LATEST_VERSION }}
+          name: v${{ env.LATEST_VERSION }}
           body: "NPS Client - v${{ env.LATEST_VERSION }}"
           files: |
-            npsclient-v${{ env.LATEST_VERSION }}-${{ env.NEW_VERSION_CODE }}.zip
+            npsclient-v${{ env.LATEST_VERSION }}.zip
           fail_on_unmatched_files: true
           token: ${{ secrets.GITHUB_TOKEN }}
