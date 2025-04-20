@@ -59,7 +59,7 @@ jobs:
 
       - name: Update changelog.md
         run: |
-          echo "### v${{ env.LATEST_VERSION }} - $(date)" > changelog.md
+          echo "### v${{ env.LATEST_VERSION }}" > changelog.md
           echo " - Update NPS Client to v${{ env.LATEST_VERSION }}" >> changelog.md
           echo "Changelog updated with version v${{ env.LATEST_VERSION }}." 
 
@@ -82,7 +82,7 @@ jobs:
       - name: Create ZIP file
         if: env.IF_CHANGE == '1'
         run: |
-          zip -r npsclient-v${{ env.LATEST_VERSION }}.zip . -x '*.github/*' '*.git/*' 'update.json'
+          zip -r npsclient-v${{ env.LATEST_VERSION }}.zip . -x '*.github/*' '*.git/*' 'update.json' 'changelog.md'
           echo "Module zipped as npsclient-v${{ env.LATEST_VERSION }}.zip"
 
       - name: Upload release files
