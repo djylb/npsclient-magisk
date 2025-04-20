@@ -59,7 +59,7 @@ jobs:
 
       - name: Update changelog.md
         run: |
-          echo "### v${{ env.LATEST_VERSION }} - ${{ env.NEW_VERSION_CODE }}" > changelog.md
+          echo "### v${{ env.LATEST_VERSION }}" > changelog.md
           echo " - Update NPS Client to v${{ env.LATEST_VERSION }}" >> changelog.md
           echo "Changelog updated with version v${{ env.LATEST_VERSION }}." 
 
@@ -74,7 +74,7 @@ jobs:
             echo "IF_CHANGE=0" >> $GITHUB_ENV
             exit 0
           else
-            git commit -m "Update NPS Client to v${{ env.LATEST_VERSION }}-${{ env.NEW_VERSION_CODE }}"
+            git commit -m "Update NPS Client to v${{ env.LATEST_VERSION }}"
             git push
             echo "IF_CHANGE=1" >> $GITHUB_ENV
           fi
