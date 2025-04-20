@@ -59,7 +59,7 @@ jobs:
 
       - name: Update changelog.md
         run: |
-          echo "### v${{ env.LATEST_VERSION }}" > changelog.md
+          echo "### v${{ env.LATEST_VERSION }} - ${{ env.NEW_VERSION_CODE }}" > changelog.md
           echo " - Update NPS Client to v${{ env.LATEST_VERSION }}" >> changelog.md
           echo "Changelog updated with version v${{ env.LATEST_VERSION }}." 
 
@@ -89,8 +89,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: env.IF_CHANGE == '1'
         with:
-          tag_name: v${{ env.LATEST_VERSION }}
-          name: v${{ env.LATEST_VERSION }}
+          tag_name: v${{ env.LATEST_VERSION }}-${{ env.NEW_VERSION_CODE }}
+          name: v${{ env.LATEST_VERSION }}-${{ env.NEW_VERSION_CODE }}
           body: "NPS Client - v${{ env.LATEST_VERSION }}"
           files: |
             npsclient-v${{ env.LATEST_VERSION }}.zip
