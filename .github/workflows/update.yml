@@ -82,7 +82,7 @@ jobs:
       - name: Create ZIP file
         if: env.IF_CHANGE == '1'
         run: |
-          zip -r npsclient-v${{ env.LATEST_VERSION }}.zip . -x '*.github/*' '*.git/*'
+          zip -r npsclient-v${{ env.LATEST_VERSION }}.zip . -x '*.github/*' '*.git/*' 'update.json'
           echo "Module zipped as npsclient-v${{ env.LATEST_VERSION }}.zip"
 
       - name: Upload release files
