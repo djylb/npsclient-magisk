@@ -51,11 +51,23 @@ jobs:
           sed -i "s/version=v[0-9]\+\.[0-9]\+\.[0-9]\+/version=v${{ env.LATEST_VERSION }}/" module.prop
           echo "Updated module.prop with new versionCode and version."
 
+      - name: Update update.json
+        run: |
+          # Update the version and versionCode in update.json
+          jq ".version = \"v${{ env.LATEST_VERSION }}\" | .versionCode = ${{ env.NEW_VERSION_CODE }} | .zipUrl = \"https://github.com/djylb/npsclient-magisk/releases/download/v${{ env.LATEST_VERSION }}/npsclient-v${{ env.LATEST_VERSION }}.zip\" | .changelog = \"https://cdn.jsdelivr.net/gh/djylb/npsclient-magisk/changelog.md\"" update.json > update.json.tmp && mv update.json.tmp update.json
+          echo "Updated update.json with new version and versionCode."
+
+      - name: Update changelog.md
+        run: |
+          echo "### v${{ env.LATEST_VERSION }} - $(date)" > changelog.md
+          echo " - Update NPS Client to v${{ env.LATEST_VERSION }}" >> changelog.md
+          echo "Changelog updated with version v${{ env.LATEST_VERSION }}." 
+
       - name: Commit and push changes
         run: |
           git config --global user.name "djylb"
           git config --global user.email "duan@d-jy.net"
-          git add module.prop system/priv-app/com.duanlab.npsclient/com.duanlab.npsclient.apk
+          git add module.prop update.json changelog.md system/priv-app/com.duanlab.npsclient/com.duanlab.npsclient.apk
           
           if git diff --cached --quiet; then
             echo "No changes detected, skipping commit."
