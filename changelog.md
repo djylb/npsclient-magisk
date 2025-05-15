@@ -1,2 +1,2 @@
-### v1.0.18
- - Update NPS Client to v1.0.18
+### v1.0.19
+ - Update NPS Client to v1.0.19
