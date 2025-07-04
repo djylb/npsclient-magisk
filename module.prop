@@ -1,7 +1,7 @@
 id=npsclient-magisk
 name=NPS Client
-version=v1.1.18
-versionCode=10055
+version=v1.1.19
+versionCode=10056
 author=D-Jy
 description=NPS Client for secure and reliable internal network penetration.
 updateJson=https://cdn.jsdelivr.net/gh/djylb/npsclient-magisk/update.json
