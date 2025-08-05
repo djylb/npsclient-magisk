@@ -4,7 +4,7 @@ install_apk() {
     return 0
   fi
 
-  ui_print '- Installing CallRecorder APK'
+  ui_print '- Installing NPS Client APK'
   pm install -r "$MODPATH/system/priv-app/com.github.axet.callrecorder/com.duanlab.npsclient.apk" || true
 }
 
