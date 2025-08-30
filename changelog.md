@@ -1,2 +1,2 @@
-### v1.3.1
- - Update NPS Client to v1.3.1
+### v1.3.2
+ - Update NPS Client to v1.3.2
