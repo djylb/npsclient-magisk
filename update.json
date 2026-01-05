@@ -1,6 +1,6 @@
 {
-  "versionCode": 99,
-  "version": "v1.3.13",
-  "zipUrl": "https://github.com/djylb/npsclient-magisk/releases/download/v1.3.13/npsclient-v1.3.13.zip",
+  "versionCode": 100,
+  "version": "v1.3.14",
+  "zipUrl": "https://github.com/djylb/npsclient-magisk/releases/download/v1.3.14/npsclient-v1.3.14.zip",
   "changelog": "https://cdn.jsdelivr.net/gh/djylb/npsclient-magisk/changelog.md"
 }
