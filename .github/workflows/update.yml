@@ -14,20 +14,33 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Get NPS Client version
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          latest_version=$(curl --silent "https://api.github.com/repos/djylb/npsclient/releases/latest" | jq -r .tag_name) 
-          if [ "$latest_version" = "null" ] || [ -z "$latest_version" ]; then
-            echo "Failed to retrieve remote version." 
+          # The dispatch arrives as soon as the release is published: wait
+          # until releases/latest names it and carries the APK.
+          for i in $(seq 1 20); do
+            latest_version=$(gh api repos/djylb/npsclient/releases/latest --jq .tag_name 2>/dev/null || true)
+            if [[ "$latest_version" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] &&
+              gh api "repos/djylb/npsclient/releases/tags/$latest_version" --jq '.assets[].name' 2>/dev/null | grep -qx app-universal-release.apk; then
+              break
+            fi
+            echo "Release not ready (attempt $i): '$latest_version'"
+            latest_version=""
+            sleep 30
+          done
+          if [ -z "$latest_version" ]; then
+            echo "::error::Failed to retrieve the latest NPS Client release."
             exit 1
-          else
-            latest_version_no_v=$(echo "$latest_version" | sed 's/^v//' | xargs)
           fi
-          echo "Latest NPS Client version: '$latest_version_no_v'" 
+          latest_version_no_v=${latest_version#v}
+          echo "Latest NPS Client version: '$latest_version_no_v'"
           echo "LATEST_VERSION=$latest_version_no_v" >> $GITHUB_ENV
 
       - name: Download APK
         run: |
-          curl -L "https://github.com/djylb/npsclient/releases/download/v${{ env.LATEST_VERSION }}/app-universal-release.apk" -o app-universal-release.apk
+          curl -fsSL --retry 5 --retry-delay 10 --retry-all-errors \
+            "https://github.com/djylb/npsclient/releases/download/v${{ env.LATEST_VERSION }}/app-universal-release.apk" -o app-universal-release.apk
           mkdir -p system/priv-app/com.duanlab.npsclient/
           mv app-universal-release.apk system/priv-app/com.duanlab.npsclient/com.duanlab.npsclient.apk
           echo "APK replaced with the latest version."
